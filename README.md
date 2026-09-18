@@ -98,6 +98,12 @@ data/plugin_data/astrbot_plugin_invite_tree/
 - 协议端若禁止 `get_group_member_info` 或查询受限，无法识别的好友会直接挂在机器人根节点下。
 - QQ 头像来自公开 qlogo 地址；如运行环境无法访问外网，可关闭头像下载。
 
+## 开源许可
+
+除字体资源外，本插件代码与文档采用 [MIT License](LICENSE) 开源。
+
+`font/MiSans-Medium.ttf` 不适用 MIT License。MiSans 字体版权及相关知识产权归小米科技有限责任公司所有，其使用受 [`font/README.md`](font/README.md) 中《MiSans 字体知识产权许可协议》约束。
+
 ## 参考
 
 事件兼容设计参考了本地提供的 MIT 插件 `astrbot_plugin_relationship` 对 OneBot 好友申请、群邀请和机器人入群通知的处理方式。本插件没有复制其业务代码，功能聚焦于关系持久化和树图生成。

@@ -4,8 +4,7 @@ desc: 记录 QQ 好友、群邀请和群成员来源关系，并生成头像树�
 short_desc: 记录好友与群邀请来源，生成持久化关系树。
 version: 1.0.0
 author: jijiang
-repo: local
+repo: https://github.com/JiJiang233/astrbot_plugin_invite_tree
 astrbot_version: ">=4.9.2"
 support_platforms:
   - aiocqhttp
-
