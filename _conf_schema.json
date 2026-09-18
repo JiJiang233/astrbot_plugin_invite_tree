@@ -1,0 +1,32 @@
+{
+  "infer_source_group": {
+    "description": "推断好友申请的来源群",
+    "hint": "优先读取协议扩展字段和验证消息；缺失时查询共同群成员关系。",
+    "type": "bool",
+    "default": true
+  },
+  "source_scan_group_limit": {
+    "description": "单次最多扫描群数",
+    "hint": "好友申请没有来源群字段时，最多检查多少个机器人已加入的群。",
+    "type": "int",
+    "default": 80
+  },
+  "source_scan_concurrency": {
+    "description": "来源群查询并发数",
+    "hint": "建议保持 2 到 6，过高可能触发协议端限流。",
+    "type": "int",
+    "default": 4
+  },
+  "download_avatars": {
+    "description": "下载 QQ 头像",
+    "hint": "关闭后关系图使用本地文字占位头像。",
+    "type": "bool",
+    "default": true
+  },
+  "avatar_cache_hours": {
+    "description": "头像缓存时长（小时）",
+    "type": "int",
+    "default": 168
+  }
+}
+

@@ -1,0 +1,1 @@
+"""AstrBot relationship tree plugin."""
