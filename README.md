@@ -15,6 +15,8 @@ AstrBot 的 QQ（aiocqhttp / OneBot v11）邀请关系树插件。它会长期�
 - 文字统一使用插件内置的 `font/MiSans-Medium.ttf`。
 - 节点之间使用平滑的三次贝塞尔曲线连接。
 
+MiSans 字体版权及相关知识产权归小米科技有限责任公司所有。字体说明与完整许可协议见 [`font/README.md`](font/README.md)。
+
 ## 安装要求
 
 - AstrBot `>= 4.9.2`；
