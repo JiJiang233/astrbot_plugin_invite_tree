@@ -194,36 +194,14 @@ class RelationshipGraph:
         nodes = snap["nodes"]
         if root_id not in nodes:
             raise KeyError(root_id)
-        # A graph node can have several observed parents. For the image, select the
-        # most meaningful parent: source-group and inviter relations beat fallbacks.
-        selected_by_child: dict[str, dict[str, Any]] = {}
+        adjacency: dict[str, list[dict[str, Any]]] = {}
         for edge in snap["edges"]:
             if edge.get("parent") in nodes and edge.get("child") in nodes:
-                child_id = str(edge["child"])
-                current = selected_by_child.get(child_id)
-                edge_rank = (
-                    RELATION_PRIORITY.get(str(edge.get("relation", "")), 0),
-                    str(edge.get("created_at", "")),
-                    str(edge.get("parent", "")),
-                )
-                current_rank = (
-                    (
-                        RELATION_PRIORITY.get(str(current.get("relation", "")), 0),
-                        str(current.get("created_at", "")),
-                        str(current.get("parent", "")),
-                    )
-                    if current
-                    else None
-                )
-                if current_rank is None or edge_rank > current_rank:
-                    selected_by_child[child_id] = edge
-
-        adjacency: dict[str, list[dict[str, Any]]] = {}
-        for edge in selected_by_child.values():
-            adjacency.setdefault(str(edge["parent"]), []).append(edge)
+                adjacency.setdefault(str(edge["parent"]), []).append(edge)
         for edges in adjacency.values():
             edges.sort(
                 key=lambda edge: (
+                    -RELATION_PRIORITY.get(str(edge.get("relation", "")), 0),
                     str(nodes[edge["child"]].get("type", "")),
                     str(nodes[edge["child"]].get("label", "")),
                     str(edge["child"]),
@@ -245,11 +223,4 @@ class RelationshipGraph:
                 item["children"].append(child)
             return item
 
-        tree = build(root_id, {root_id})
-        for node_id in sorted(nodes):
-            if node_id == root_id or node_id in visited:
-                continue
-            orphan = build(node_id, {node_id})
-            orphan["relation"] = "unlinked"
-            tree["children"].append(orphan)
-        return tree
+        return build(root_id, {root_id})
