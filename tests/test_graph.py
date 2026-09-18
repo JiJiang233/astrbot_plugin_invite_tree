@@ -4,7 +4,7 @@ import unittest
 from pathlib import Path
 
 from astrbot_plugin_invite_tree.graph import RelationshipGraph
-from astrbot_plugin_invite_tree.renderer import render_tree
+from astrbot_plugin_invite_tree.renderer import FONT_PATH, _bezier_points, render_tree
 
 TEST_CACHE = Path(os.environ.get("ASTRBOT_PLUGIN_TEST_CACHE", Path.cwd() / "cache"))
 TEST_CACHE.mkdir(parents=True, exist_ok=True)
@@ -68,6 +68,13 @@ class GraphTests(unittest.TestCase):
             output = temp_dir / "tree.png"
             render_tree(graph.project_tree("bot:1"), {}, output)
             self.assertTrue(output.read_bytes().startswith(b"\x89PNG\r\n\x1a\n"))
+
+    def test_bundled_font_and_bezier_connector(self) -> None:
+        self.assertTrue(FONT_PATH.is_file())
+        points = _bezier_points((0.0, 0.0), (120.0, 80.0))
+        self.assertEqual(points[0], (0.0, 0.0))
+        self.assertEqual(points[-1], (120.0, 80.0))
+        self.assertGreater(len(points), 20)
 
 
 if __name__ == "__main__":

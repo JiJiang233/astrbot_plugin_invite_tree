@@ -15,6 +15,7 @@ BOT_COLOR = "#22A699"
 BACKGROUND = "#F7F9FC"
 INK = "#263238"
 LINE = "#B8C2CC"
+FONT_PATH = Path(__file__).resolve().parent / "font" / "MiSans-Medium.ttf"
 
 
 @dataclass
@@ -26,6 +27,11 @@ class LayoutNode:
 
 
 def _font(size: int) -> ImageFont.ImageFont:
+    if FONT_PATH.exists():
+        try:
+            return ImageFont.truetype(str(FONT_PATH), size=size)
+        except OSError:
+            pass
     candidates = [
         Path("/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc"),
         Path("/usr/share/fonts/truetype/wqy/wqy-zenhei.ttc"),
@@ -39,6 +45,60 @@ def _font(size: int) -> ImageFont.ImageFont:
             except OSError:
                 pass
     return ImageFont.load_default()
+
+
+def _bezier_points(
+    start: tuple[float, float],
+    end: tuple[float, float],
+    *,
+    segments: int = 36,
+) -> list[tuple[float, float]]:
+    """Return a smooth horizontal cubic Bezier connector."""
+    span = max(40.0, end[0] - start[0])
+    handle = max(34.0, span * 0.5)
+    control_1 = (start[0] + handle, start[1])
+    control_2 = (end[0] - handle, end[1])
+    points: list[tuple[float, float]] = []
+    for index in range(segments + 1):
+        t = index / segments
+        inverse = 1.0 - t
+        x = (
+            inverse**3 * start[0]
+            + 3 * inverse**2 * t * control_1[0]
+            + 3 * inverse * t**2 * control_2[0]
+            + t**3 * end[0]
+        )
+        y = (
+            inverse**3 * start[1]
+            + 3 * inverse**2 * t * control_1[1]
+            + 3 * inverse * t**2 * control_2[1]
+            + t**3 * end[1]
+        )
+        points.append((x, y))
+    return points
+
+
+def _draw_bezier_connector(
+    draw: ImageDraw.ImageDraw,
+    start: tuple[float, float],
+    end: tuple[float, float],
+) -> None:
+    points = _bezier_points(start, end)
+    draw.line(points, fill=LINE, width=4, joint="curve")
+
+    previous = points[-2]
+    angle = math.atan2(end[1] - previous[1], end[0] - previous[0])
+    arrow_length = 11
+    arrow_spread = math.radians(31)
+    left = (
+        end[0] - arrow_length * math.cos(angle - arrow_spread),
+        end[1] - arrow_length * math.sin(angle - arrow_spread),
+    )
+    right = (
+        end[0] - arrow_length * math.cos(angle + arrow_spread),
+        end[1] - arrow_length * math.sin(angle + arrow_spread),
+    )
+    draw.polygon([end, left, right], fill=LINE)
 
 
 def _flatten(
@@ -94,12 +154,7 @@ def render_tree(
     for parent, child in edges:
         start = (parent.x + 86, parent.y + 43)
         end = (child.x - 13, child.y + 43)
-        mid_x = (start[0] + end[0]) // 2
-        draw.line([start, (mid_x, start[1]), (mid_x, end[1]), end], fill=LINE, width=4)
-        draw.polygon(
-            [(end[0], end[1]), (end[0] - 10, end[1] - 6), (end[0] - 10, end[1] + 6)],
-            fill=LINE,
-        )
+        _draw_bezier_connector(draw, start, end)
 
     for node in nodes:
         data = node.data
