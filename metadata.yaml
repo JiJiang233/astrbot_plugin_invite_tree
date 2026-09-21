@@ -1,7 +1,7 @@
 name: astrbot_plugin_invite_tree
-display_name: 邀请关系树
-desc: 记录 QQ 好友、群邀请和群成员来源关系，并生成头像树状图。
-short_desc: 记录好友与群邀请来源，生成持久化关系树。
+display_name: QQ 邀请关系树
+desc: 自动记录好友申请者的来源群，以及用户邀请机器人加入群聊的关系链；数据长期保存在本地，并可通过管理员命令生成带 QQ 头像的树状关系图。仅支持 aiocqhttp（OneBot v11）。
+short_desc: 记录好友来源群与拉群链路，生成持久化头像关系树。
 version: 1.0.0
 author: jijiang
 repo: https://github.com/JiJiang233/astrbot_plugin_invite_tree
